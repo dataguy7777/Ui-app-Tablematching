@@ -2,5 +2,6 @@ import streamlit as st
 
 st.title("🎈 My new app")
 st.write(
-    "Let's start building! For help and inspiration, head over to [docs.streamlit.io](https://docs.streamlit.io/)."
-)
+    f'<iframe src="https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
+        unsafe_allow_html=True,
+    )
