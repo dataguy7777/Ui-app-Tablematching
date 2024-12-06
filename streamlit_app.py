@@ -49,16 +49,14 @@ for row in data:
             modal.open()
 
 # Define the content of the modal
-with modal.container():
-    st.markdown("### Abstract Instrument Role - Detailed View")
-    st.components.v1.html(
-        f"""
-        <iframe src="{iframe_url}" width="100%" height="600px" frameborder="0"></iframe>
-        """,
-        height=600,
-    )
-    if st.button("Close"):
-        modal.close()
-
-# Render the modal
-modal.render()
+if modal.is_open():
+    with modal.container():
+        st.markdown("### Abstract Instrument Role - Detailed View")
+        st.components.v1.html(
+            f"""
+            <iframe src="{iframe_url}" width="100%" height="600px" frameborder="0"></iframe>
+            """,
+            height=600,
+        )
+        if st.button("Close Modal"):
+            modal.close()
