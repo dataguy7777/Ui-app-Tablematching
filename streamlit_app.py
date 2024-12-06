@@ -16,7 +16,7 @@ data = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
+        "Iframe URL": "https://bird.ecb.europa.eu/view/Cube/3000124535161",
     },
     {
         "Name": "Asset Pool Security Position Assignment",
@@ -29,7 +29,7 @@ data = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL?published=true",
+        "Iframe URL": "https://bird.ecb.europa.eu/view/Cube/3000124535210",
     },
 ]
 
