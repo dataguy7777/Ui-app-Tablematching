@@ -7,7 +7,7 @@ st.set_page_config(page_title="Large Webpage Embed", layout="wide")
 st.title("Large Webpage Embed Example")
 
 # Define the URL to embed
-url = "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true"
+url = "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ABSTRCT_INSTRMNT_RL_EIL?published=true"
 
 # Add the iframe to the page with adjusted width and height
 components.html(
