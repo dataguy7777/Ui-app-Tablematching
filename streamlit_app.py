@@ -57,6 +57,8 @@ with modal.container():
         """,
         height=600,
     )
+    if st.button("Close"):
+        modal.close()
 
 # Render the modal
 modal.render()
