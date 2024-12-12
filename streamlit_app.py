@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-import streamlit.components.v1 as components
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
+from st_aggrid.shared import JsCode
 
 # Set page configuration
 st.set_page_config(
@@ -81,108 +82,109 @@ data = [
 # Convert data to DataFrame for better display
 df = pd.DataFrame(data)
 
-# Add "Details" column with HTML button links without newline characters
-df['Details'] = df['Link'].apply(
-    lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
+# Define a JavaScript function to handle the "Regenerate" button clicks
+button_renderer = JsCode("""
+function(params) {
+    return `
+        <button class="regen-button">Regenerate</button>
+        <span class="info-icon" title="The LLM with updated generated match">ℹ️</span>
+    `;
+};
+""")
+
+# Configure AgGrid options
+gb = GridOptionsBuilder.from_dataframe(df.drop(columns=["Link"]))
+gb.configure_column("Details", header_name="Details", cellRenderer=JsCode("""
+function(params) {
+    return `<a href="${params.value}" target="_blank"><button class="details-button">Details</button></a>`;
+};
+"""), width=120)
+gb.configure_column("Regenerate", header_name="Regenerate", cellRenderer=button_renderer, width=150)
+gb.configure_pagination(paginationAutoPageSize=True)
+gb.configure_side_bar()
+
+gridOptions = gb.build()
+
+# Define CSS for buttons and info icons
+st.markdown("""
+<style>
+.regen-button {
+    background-color: #f0ad4e; /* Orange */
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin-right: 5px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.regen-button:hover {
+    background-color: #ec971f;
+}
+
+.info-icon {
+    font-size: 14px;
+    cursor: pointer;
+    color: #555;
+    position: relative;
+}
+
+/* Tooltip Styling */
+.info-icon:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 125%; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 12px;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* Tooltip Arrow */
+.info-icon:hover::before {
+    content: "";
+    position: absolute;
+    bottom: 115%; /* Slightly below the tooltip */
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+/* Hide tooltip by default */
+.info-icon::after,
+.info-icon::before {
+    opacity: 0;
+    pointer-events: none;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# Display the AgGrid table
+grid_response = AgGrid(
+    df.drop(columns=["Link"]),
+    gridOptions=gridOptions,
+    enable_enterprise_modules=False,
+    update_mode=GridUpdateMode.NO_UPDATE,
+    allow_unsafe_jscode=True  # Required to render the buttons and tooltips
 )
 
-# Select columns to display, excluding 'Link'
-display_df = df.drop(columns=["Link"])
-
-# Function to generate styled HTML table
-def generate_styled_table(dataframe):
-    # Define CSS styles
-    styles = """
-    <style>
-    /* Table Container */
-    .table-container {
-        overflow-x: auto;
-    }
-    
-    /* Styled Table */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        font-family: Arial, sans-serif;
-    }
-    
-    /* Table Header */
-    th {
-        position: sticky;
-        top: 0;
-        background-color: #4CAF50;
-        color: white;
-        padding: 12px 15px;
-        text-align: left;
-    }
-    
-    /* Table Rows */
-    td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
-    }
-    
-    /* Striped Rows */
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    
-    /* Hover Effect */
-    tr:hover {
-        background-color: #f1f1f1;
-    }
-    
-    /* Details Button Styling */
-    .details-button {
-        background-color: #008CBA; /* Blue */
-        border: none;
-        color: white;
-        padding: 8px 16px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 14px;
-        margin: 2px 0;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: background-color 0.3s ease;
-    }
-    
-    .details-button:hover {
-        background-color: #005f6a;
-    }
-    
-    /* Responsive Design */
-    @media screen and (max-width: 768px) {
-        th, td {
-            padding: 8px 10px;
-        }
-        .details-button {
-            padding: 6px 12px;
-            font-size: 12px;
-        }
-    }
-    </style>
-    """
-    
-    # Generate HTML table
-    table_html = dataframe.to_html(escape=False, index=False, classes='styled-table')
-    
-    # Wrap the table in a div for horizontal scrolling on small screens
-    final_html = f"""
-    {styles}
-    <div class="table-container">
-        {table_html}
-    </div>
-    """
-    return final_html
-
-# Generate the styled table HTML
-styled_table = generate_styled_table(display_df)
-
-# Display the styled table using components.html
-components.html(
-    styled_table,
-    height=600,  # Adjust height as needed
-    scrolling=True
-)
+# Capture button clicks (Advanced Implementation)
+# This requires more complex integration and is beyond the current scope.
+# You can explore Streamlit's Custom Components for deeper interactivity.
