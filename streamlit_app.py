@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import streamlit.components.v1 as components
 
 # Set page configuration
 st.set_page_config(
@@ -14,8 +15,7 @@ st.title("📊 Financial Data Dashboard")
 st.markdown(
     """
     Explore financial instrument data, roles, and classifications all in a compact and modern layout. Navigate, view details, and analyze data trends below.
-    """,
-    unsafe_allow_html=True
+    """
 )
 
 # Data for tables
@@ -93,7 +93,7 @@ df['Details'] = df['Link'].apply(
 # Select columns to display, excluding 'Link'
 display_df = df.drop(columns=["Link"])
 
-# Convert DataFrame to HTML with enhanced styling
+# Function to generate styled HTML table
 def generate_styled_table(dataframe):
     # Define CSS styles
     styles = """
@@ -170,7 +170,7 @@ def generate_styled_table(dataframe):
     """
     
     # Generate HTML table
-    table_html = dataframe.to_html(escape=False, index=False)
+    table_html = dataframe.to_html(escape=False, index=False, classes='styled-table')
     
     # Wrap the table in a div for horizontal scrolling on small screens
     final_html = f"""
@@ -181,6 +181,12 @@ def generate_styled_table(dataframe):
     """
     return final_html
 
-# Display the styled table
-st.markdown("### 📋 Financial Instrument Overview", unsafe_allow_html=True)
-st.markdown(generate_styled_table(display_df), unsafe_allow_html=True)
+# Generate the styled table HTML
+styled_table = generate_styled_table(display_df)
+
+# Display the styled table using components.html
+components.html(
+    styled_table,
+    height=600,  # Adjust height as needed
+    scrolling=True
+)
