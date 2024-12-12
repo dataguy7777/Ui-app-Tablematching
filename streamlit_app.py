@@ -86,7 +86,7 @@ df['Details'] = df['Link'].apply(
     lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
 )
 
-# Add "Regenerate" column with button and info icon
+# Add "Regenerate" column with button and info icon without newline characters
 df['Regenerate'] = df['Link'].apply(
     lambda x: '''
         <div class="regen-container">
