@@ -89,10 +89,18 @@ st.dataframe(
     height=400
 )
 
-# Add detailed links in a single row for better visual appeal
+# Add detailed links in a single horizontal line for better visual appeal
 st.markdown("### 🔗 Explore Details")
-for index, row in df.iterrows():
-    st.markdown(f"- [**{row['Name']}**]({row['Link']})")
+
+# Create a horizontal layout for links using columns
+num_links = len(df)
+# Limit the number of columns to prevent layout issues on smaller screens
+max_cols = 6
+cols = st.columns(min(num_links, max_cols))
+
+for col, row in zip(cols, df.itertuples()):
+    # Use HTML to open links in a new tab
+    col.markdown(f'<a href="{row.Link}" target="_blank">{row.Name}</a>', unsafe_allow_html=True)
 
 # Add a sample graph visualization
 st.markdown("### 📊 Data Trends")
