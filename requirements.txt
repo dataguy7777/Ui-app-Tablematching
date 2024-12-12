@@ -3,3 +3,4 @@ streamlit_modal
 matplotlib
 numpy
 streamlit-aggrid
+openpyxl
