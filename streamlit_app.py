@@ -14,85 +14,13 @@ st.title("📊 Financial Data Dashboard")
 
 st.markdown(
     """
-    Explore financial instrument data, roles, and classifications all in a compact and modern layout. Navigate, view details, and perform actions directly from the table below.
+    Explore financial instrument data, roles, and classifications all in a compact and modern layout. 
+    Navigate between tabs to view existing data or upload your own Excel files to customize the display.
     """
 )
 
-# Data for tables
-data = [
-    {
-        "Name": "Abstract Instrument Role",
-        "Code": "BIRD_ABSTRCT_INSTRMNT_RL_EIL",
-        "Description": "An Abstract instrument role is a role an Instrument may act in.",
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
-    },
-    {
-        "Name": "Asset Pool Security Position Assignment",
-        "Code": "BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL",
-        "Description": (
-            "An Asset pool Debt security position assignment indicates which (part of a) Debt security position is included in which Asset pool."
-        ),
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL?published=true",
-    },
-    {
-        "Name": "Credit Risk Instrument",
-        "Code": "BIRD_CRD_RSK_INSTRMNT_EIL",
-        "Description": "A Credit Risk Instrument is used to quantify the probability of default.",
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.08.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/example2.html",
-    },
-    {
-        "Name": "Liquidity Buffer Instrument",
-        "Code": "BIRD_LQD_BFFR_INSTRMNT_EIL",
-        "Description": "A Liquidity Buffer Instrument ensures the institution has sufficient liquid assets.",
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.08.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/example3.html",
-    },
-    {
-        "Name": "Market Value Position",
-        "Code": "BIRD_MRKT_VAL_PSTN_EIL",
-        "Description": "Represents the current market valuation of an instrument.",
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.09.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/example4.html",
-    },
-    {
-        "Name": "Collateral Instrument Role",
-        "Code": "BIRD_CLLTRL_INSTRMNT_RL_EIL",
-        "Description": "Indicates the role of an instrument as collateral in secured transactions.",
-        "Agency": "SDD team (ECB)",
-        "Type": "EIL",
-        "Version": "1 (01.09.2023 - 31.12.9999)",
-        "Link": "https://bird.ecb.europa.eu/example5.html",
-    }
-]
-
-# Convert data to DataFrame for better display
-df = pd.DataFrame(data)
-
-# Add "Details" column with HTML button links without newline characters
-df['Details'] = df['Link'].apply(
-    lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
-)
-
-# Add "Regenerate" column with button and info icon without newline characters
-df['Regenerate'] = df['Link'].apply(
-    lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>'
-)
-
-# Select columns to display, excluding 'Link'
-display_df = df.drop(columns=["Link"])
+# Define tabs
+tabs = st.tabs(["View Existing Data", "Upload and View Excel"])
 
 # Function to generate styled HTML table
 def generate_styled_table(dataframe):
@@ -254,12 +182,173 @@ def generate_styled_table(dataframe):
     """
     return final_html
 
-# Generate the styled table HTML
-styled_table = generate_styled_table(display_df)
+# =======================
+# Tab 1: View Existing Data
+# =======================
+with tabs[0]:
+    st.header("📂 Existing Financial Instruments")
+    
+    # Sample data
+    data = [
+        {
+            "Name": "Abstract Instrument Role",
+            "Code": "BIRD_ABSTRCT_INSTRMNT_RL_EIL",
+            "Description": "An Abstract instrument role is a role an Instrument may act in.",
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.07.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
+        },
+        {
+            "Name": "Asset Pool Security Position Assignment",
+            "Code": "BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL",
+            "Description": (
+                "An Asset pool Debt security position assignment indicates which (part of a) Debt security position is included in which Asset pool."
+            ),
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.07.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL?published=true",
+        },
+        {
+            "Name": "Credit Risk Instrument",
+            "Code": "BIRD_CRD_RSK_INSTRMNT_EIL",
+            "Description": "A Credit Risk Instrument is used to quantify the probability of default.",
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.08.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/example2.html",
+        },
+        {
+            "Name": "Liquidity Buffer Instrument",
+            "Code": "BIRD_LQD_BFFR_INSTRMNT_EIL",
+            "Description": "A Liquidity Buffer Instrument ensures the institution has sufficient liquid assets.",
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.08.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/example3.html",
+        },
+        {
+            "Name": "Market Value Position",
+            "Code": "BIRD_MRKT_VAL_PSTN_EIL",
+            "Description": "Represents the current market valuation of an instrument.",
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.09.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/example4.html",
+        },
+        {
+            "Name": "Collateral Instrument Role",
+            "Code": "BIRD_CLLTRL_INSTRMNT_RL_EIL",
+            "Description": "Indicates the role of an instrument as collateral in secured transactions.",
+            "Agency": "SDD team (ECB)",
+            "Type": "EIL",
+            "Version": "1 (01.09.2023 - 31.12.9999)",
+            "Link": "https://bird.ecb.europa.eu/example5.html",
+        }
+    ]
+    
+    # Convert data to DataFrame
+    df = pd.DataFrame(data)
+    
+    # Add "Details" column with HTML button links without newline characters
+    df['Details'] = df['Link'].apply(
+        lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
+    )
+    
+    # Add "Regenerate" column with button and info icon without newline characters
+    df['Regenerate'] = df['Link'].apply(
+        lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>'
+    )
+    
+    # Select columns to display, excluding 'Link'
+    display_df = df.drop(columns=["Link"])
+    
+    # Generate the styled table HTML
+    styled_table = generate_styled_table(display_df)
+    
+    # Display the styled table using components.html
+    components.html(
+        styled_table,
+        height=700,  # Adjust height as needed
+        scrolling=True
+    )
 
-# Display the styled table using components.html
-components.html(
-    styled_table,
-    height=700,  # Adjust height as needed
-    scrolling=True
-)
+# =======================
+# Tab 2: Upload and View Excel
+# =======================
+with tabs[1]:
+    st.header("📥 Upload and View Your Excel Data")
+    
+    st.markdown(
+        """
+        Upload an Excel file, select the desired sheet and columns, and view your data in a beautifully styled table.
+        """
+    )
+    
+    # File uploader
+    uploaded_file = st.file_uploader("Choose an Excel file", type=["xlsx", "xls"], key='upload_excel')
+    
+    if uploaded_file is not None:
+        try:
+            # Read all sheet names
+            xls = pd.ExcelFile(uploaded_file)
+            sheet_names = xls.sheet_names
+            
+            # Select sheet
+            selected_sheet = st.selectbox("Select Sheet", sheet_names)
+            
+            # Read the selected sheet into DataFrame
+            df_uploaded = pd.read_excel(uploaded_file, sheet_name=selected_sheet)
+            
+            # Display columns and let user select columns to display
+            all_columns = df_uploaded.columns.tolist()
+            selected_columns = st.multiselect("Select Columns to Display", all_columns, default=all_columns)
+            
+            if selected_columns:
+                # Create a DataFrame with selected columns
+                df_selected = df_uploaded[selected_columns]
+                
+                # Check if 'Link' column exists for 'Details' and 'Regenerate' buttons
+                if 'Link' in df_selected.columns:
+                    # Add "Details" column with HTML button links without newline characters
+                    df_selected['Details'] = df_selected['Link'].apply(
+                        lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>' if pd.notnull(x) else ''
+                    )
+                    
+                    # Add "Regenerate" column with button and info icon without newline characters
+                    df_selected['Regenerate'] = df_selected['Link'].apply(
+                        lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>' if pd.notnull(x) else ''
+                    )
+                else:
+                    # If 'Link' column does not exist, create empty 'Details' and 'Regenerate' columns
+                    df_selected['Details'] = ''
+                    df_selected['Regenerate'] = ''
+                    st.warning("No 'Link' column found in the selected sheet. 'Details' and 'Regenerate' buttons will be non-functional.")
+                
+                # Select columns to display, excluding 'Link' if present
+                if 'Link' in df_selected.columns:
+                    display_columns = [col for col in df_selected.columns if col != 'Link']
+                else:
+                    display_columns = df_selected.columns.tolist()
+                
+                display_df_uploaded = df_selected[display_columns]
+                
+                # Generate the styled table HTML
+                styled_table_uploaded = generate_styled_table(display_df_uploaded)
+                
+                st.subheader("📊 Your Selected Data")
+                
+                # Display the styled table using components.html
+                components.html(
+                    styled_table_uploaded,
+                    height=700,  # Adjust height as needed
+                    scrolling=True
+                )
+            else:
+                st.error("Please select at least one column to display.")
+        except Exception as e:
+            st.error(f"An error occurred while processing the file: {e}")
+    else:
+        st.info("Awaiting Excel file upload.")
+
