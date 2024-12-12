@@ -1,15 +1,22 @@
 import streamlit as st
-from streamlit_modal import Modal
 import pandas as pd
-import matplotlib.pyplot as plt
 import numpy as np
 
-# Configure page
-st.set_page_config(page_title="Data and Graph Navigation", layout="wide")
+# Set page configuration
+st.set_page_config(
+    page_title="Data Dashboard",
+    page_icon="📊",
+    layout="wide"
+)
 
-st.title("Data Navigation Example")
+# App title
+st.title("📊 Data Dashboard for Financial Instruments")
 
-# Sample data for three tables
+# Sidebar for navigation
+st.sidebar.title("Navigation")
+selected_tab = st.sidebar.radio("Go to", ["Home", "Instrument Roles", "Risk & Liquidity Instruments", "Market & Collateral Instruments", "Graphs"])
+
+# Data preparation
 data1 = [
     {
         "Name": "Abstract Instrument Role",
@@ -18,7 +25,7 @@ data1 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
+        "Link": "https://bird.ecb.europa.eu/view/Framework/1544692898369?published=true",
     },
     {
         "Name": "Asset Pool Security Position Assignment",
@@ -31,7 +38,7 @@ data1 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.07.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL?published=true",
+        "Link": "https://bird.ecb.europa.eu/bycode/cube/ECB/BIRD_ASST_PL_DBT_SCRTY_PSTN_ASSGNMNT_EIL?published=true",
     }
 ]
 
@@ -43,7 +50,7 @@ data2 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.08.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/example2.html",
+        "Link": "https://bird.ecb.europa.eu/example2.html",
     },
     {
         "Name": "Liquidity Buffer Instrument",
@@ -52,7 +59,7 @@ data2 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.08.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/example3.html",
+        "Link": "https://bird.ecb.europa.eu/example3.html",
     }
 ]
 
@@ -64,7 +71,7 @@ data3 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.09.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/example4.html",
+        "Link": "https://bird.ecb.europa.eu/example4.html",
     },
     {
         "Name": "Collateral Instrument Role",
@@ -73,89 +80,53 @@ data3 = [
         "Maintenance Agency": "SDD team (ECB)",
         "Type of Cube": "EIL - Enriched Input Layer",
         "Version": "1 (01.09.2023 - 31.12.9999)",
-        "Iframe URL": "https://bird.ecb.europa.eu/example5.html",
+        "Link": "https://bird.ecb.europa.eu/example5.html",
     }
 ]
 
-# Create dictionaries to store modals for each data row keyed by Code
-modals = {}
-for row in data1 + data2 + data3:
-    key = f"modal_{row['Code']}"
-    modals[key] = Modal(key=key, title="Detailed View", max_width=1000)
-
-# Function to display a table with modals
-def display_table_with_modals(data, table_name):
-    # Display fields as a list (excluding "Iframe URL")
-    st.write("**Fields:**")
-    fields = [f for f in data[0].keys() if f != "Iframe URL"]
-    for field in fields:
-        st.write(f"- {field}")
-
-    # Display table rows
+# Function to display data tables
+def display_table(data, title):
+    st.subheader(f"📋 {title}")
+    df = pd.DataFrame(data)
+    df = df.drop(columns=["Link"])  # Exclude links from the table for better readability
+    st.dataframe(df, use_container_width=True)
     for row in data:
-        col1, col2, col3, col4, col5, col6, col7 = st.columns([2, 3, 4, 3, 2, 3, 1])
-        with col1:
-            st.write(row["Name"])
-        with col2:
-            st.write(row["Code"])
-        with col3:
-            st.write(row["Description"])
-        with col4:
-            st.write(row["Maintenance Agency"])
-        with col5:
-            st.write(row["Type of Cube"])
-        with col6:
-            st.write(row["Version"])
-        with col7:
-            # Add a button to open the corresponding modal
-            modal_key = f"modal_{row['Code']}"
-            if st.button("View Details", key=f"button_{row['Code']}_{table_name}"):
-                modals[modal_key].open()
+        st.markdown(f"[🔗 More Info for {row['Name']}]({row['Link']})", unsafe_allow_html=True)
 
-    # Define the content of the modals if opened
-    for row in data:
-        modal_key = f"modal_{row['Code']}"
-        modal = modals[modal_key]
-        if modal.is_open():
-            with modal.container():
-                st.markdown(f"### {row['Name']} - Detailed View")
-                st.components.v1.html(
-                    f"""
-                    <iframe src="{row['Iframe URL']}" width="100%" height="600px" frameborder="0"></iframe>
-                    """,
-                    height=600,
-                )
-                if st.button(f"Close Modal {row['Code']}", key=f"close_{row['Code']}_{table_name}"):
-                    modal.close()
+# Function to display graphs
+def display_graphs():
+    st.subheader("📈 Data Graphs")
+    st.markdown("Visualize data trends over time.")
 
-# Create tabs for navigation
-tabs = st.tabs(["Table 1", "Table 2", "Table 3", "Graph"])
+    # Sample data for graphs
+    df = pd.DataFrame({
+        "Time": range(1, 11),
+        "Value": np.random.rand(10)
+    })
 
-with tabs[0]:
-    st.subheader("Table 1: Instrument Roles")
-    display_table_with_modals(data1, "table1")
+    # Line chart
+    st.line_chart(df.set_index("Time"))
 
-with tabs[1]:
-    st.subheader("Table 2: Risk & Liquidity Instruments")
-    display_table_with_modals(data2, "table2")
+    # Area chart
+    st.area_chart(df.set_index("Time"))
 
-with tabs[2]:
-    st.subheader("Table 3: Market & Collateral Instruments")
-    display_table_with_modals(data3, "table3")
+# Tabs content
+if selected_tab == "Home":
+    st.subheader("🏠 Welcome to the Data Dashboard")
+    st.markdown("""
+    This dashboard provides a detailed overview of financial instruments, including their roles, risk, liquidity, market value, 
+    and collateral instruments. Explore the sections using the sidebar.
+    """)
+    st.image("https://www.ecb.europa.eu/home/images/ecb_photo_default.jpg", use_column_width=True)
 
-with tabs[3]:
-    st.subheader("Graph & Related Information")
-    # Display fields for the graph
-    st.write("**Fields (for the displayed data set):**")
-    st.write("- Time")
-    st.write("- Value")
+elif selected_tab == "Instrument Roles":
+    display_table(data1, "Instrument Roles")
 
-    # Provide a link (example link)
-    st.write("[Visit ECB Bird Framework](https://bird.ecb.europa.eu/)")
+elif selected_tab == "Risk & Liquidity Instruments":
+    display_table(data2, "Risk & Liquidity Instruments")
 
-    # Create some sample data for the chart
-    df = pd.DataFrame({"Time": range(1, 11), "Value": np.random.rand(10)})
-    df = df.set_index("Time")
+elif selected_tab == "Market & Collateral Instruments":
+    display_table(data3, "Market & Collateral Instruments")
 
-    # Display a simple line chart
-    st.line_chart(df["Value"])
+elif selected_tab == "Graphs":
+    display_graphs()
