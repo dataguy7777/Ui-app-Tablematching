@@ -2,4 +2,4 @@ streamlit
 streamlit_modal
 matplotlib
 numpy
-st_aggrid
+streamlit-aggrid
