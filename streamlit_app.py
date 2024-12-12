@@ -22,8 +22,19 @@ st.markdown(
 # Define tabs
 tabs = st.tabs(["View Existing Data", "Upload and View Excel"])
 
-# Function to generate styled HTML table
-def generate_styled_table(dataframe):
+# Function to generate styled HTML table with info icon in header
+def generate_styled_table(dataframe, info_title=""):
+    # Modify column headers to include info icon if needed
+    columns = list(dataframe.columns)
+    modified_columns = []
+    for col in columns:
+        if col == "Regenerate":
+            modified_col = f'{col} <span class="info-icon" title="{info_title}">ℹ️</span>'
+            modified_columns.append(modified_col)
+        else:
+            modified_columns.append(col)
+    dataframe.columns = modified_columns
+
     # Define CSS styles
     styles = """
     <style>
@@ -47,6 +58,7 @@ def generate_styled_table(dataframe):
         color: white;
         padding: 12px 15px;
         text-align: left;
+        vertical-align: middle;
     }
     
     /* Table Rows */
@@ -110,7 +122,8 @@ def generate_styled_table(dataframe):
     .info-icon {
         font-size: 14px;
         cursor: pointer;
-        color: #555;
+        color: #fff; /* White color to contrast with header */
+        margin-left: 5px;
         position: relative;
     }
     
@@ -256,16 +269,16 @@ with tabs[0]:
         lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
     )
     
-    # Add "Regenerate" column with button and info icon without newline characters
+    # Add "Regenerate" column with button only (info icon moved to header)
     df['Regenerate'] = df['Link'].apply(
-        lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>'
+        lambda x: '<button class="regen-button">Regenerate</button>'
     )
     
     # Select columns to display, excluding 'Link'
     display_df = df.drop(columns=["Link"])
     
-    # Generate the styled table HTML
-    styled_table = generate_styled_table(display_df)
+    # Generate the styled table HTML with info icon in header
+    styled_table = generate_styled_table(display_df, info_title="The LLM with updated generated match")
     
     # Display the styled table using components.html
     components.html(
@@ -316,9 +329,9 @@ with tabs[1]:
                         lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>' if pd.notnull(x) else ''
                     )
                     
-                    # Add "Regenerate" column with button and info icon without newline characters
+                    # Add "Regenerate" column with button only (info icon moved to header)
                     df_selected['Regenerate'] = df_selected['Link'].apply(
-                        lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>' if pd.notnull(x) else ''
+                        lambda x: '<button class="regen-button">Regenerate</button>' if pd.notnull(x) else ''
                     )
                 else:
                     # If 'Link' column does not exist, create empty 'Details' and 'Regenerate' columns
@@ -334,8 +347,8 @@ with tabs[1]:
                 
                 display_df_uploaded = df_selected[display_columns]
                 
-                # Generate the styled table HTML
-                styled_table_uploaded = generate_styled_table(display_df_uploaded)
+                # Generate the styled table HTML with info icon in header
+                styled_table_uploaded = generate_styled_table(display_df_uploaded, info_title="The LLM with updated generated match")
                 
                 st.subheader("📊 Your Selected Data")
                 
@@ -351,4 +364,3 @@ with tabs[1]:
             st.error(f"An error occurred while processing the file: {e}")
     else:
         st.info("Awaiting Excel file upload.")
-
