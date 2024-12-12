@@ -12,7 +12,10 @@ st.set_page_config(
 st.title("📊 Financial Data Dashboard")
 
 st.markdown(
-    """Explore financial instrument data, roles, and classifications all in a compact and modern layout. Navigate, view details, and analyze data trends below."""
+    """
+    Explore financial instrument data, roles, and classifications all in a compact and modern layout. Navigate, view details, and analyze data trends below.
+    """,
+    unsafe_allow_html=True
 )
 
 # Data for tables
@@ -80,37 +83,104 @@ df = pd.DataFrame(data)
 
 # Add "Details" column with HTML button links
 df['Details'] = df['Link'].apply(
-    lambda x: f'<a href="{x}" target="_blank"><button style="background-color:#4CAF50; color:white; border:none; padding:5px 10px; text-align:center; text-decoration:none; display:inline-block; font-size:14px; margin:2px; cursor:pointer; border-radius:4px;">Details</button></a>'
+    lambda x: f'''
+        <a href="{x}" target="_blank">
+            <button class="details-button">Details</button>
+        </a>
+    '''
 )
 
 # Select columns to display, excluding 'Link'
 display_df = df.drop(columns=["Link"])
 
-# Convert DataFrame to HTML
-def generate_table(dataframe):
+# Convert DataFrame to HTML with enhanced styling
+def generate_styled_table(dataframe):
     # Define CSS styles
     styles = """
     <style>
+    /* Table Container */
+    .table-container {
+        overflow-x: auto;
+    }
+    
+    /* Styled Table */
     table {
         width: 100%;
         border-collapse: collapse;
+        font-family: Arial, sans-serif;
     }
-    th, td {
+    
+    /* Table Header */
+    th {
+        position: sticky;
+        top: 0;
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 15px;
         text-align: left;
-        padding: 8px;
+    }
+    
+    /* Table Rows */
+    td {
+        padding: 12px 15px;
         border-bottom: 1px solid #ddd;
     }
-    th {
-        background-color: #f2f2f2;
+    
+    /* Striped Rows */
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
     }
-    button {
+    
+    /* Hover Effect */
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+    
+    /* Details Button Styling */
+    .details-button {
+        background-color: #008CBA; /* Blue */
+        border: none;
+        color: white;
+        padding: 8px 16px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
         font-size: 14px;
+        margin: 2px 0;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+    }
+    
+    .details-button:hover {
+        background-color: #005f6a;
+    }
+    
+    /* Responsive Design */
+    @media screen and (max-width: 768px) {
+        th, td {
+            padding: 8px 10px;
+        }
+        .details-button {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
     }
     </style>
     """
+    
     # Generate HTML table
-    return styles + dataframe.to_html(escape=False, index=False)
+    table_html = dataframe.to_html(escape=False, index=False)
+    
+    # Wrap the table in a div for horizontal scrolling on small screens
+    final_html = f"""
+    {styles}
+    <div class="table-container">
+        {table_html}
+    </div>
+    """
+    return final_html
 
-# Display data as a styled HTML table
+# Display the styled table
 st.markdown("### 📋 Financial Instrument Overview", unsafe_allow_html=True)
-st.markdown(generate_table(display_df), unsafe_allow_html=True)
+st.markdown(generate_styled_table(display_df), unsafe_allow_html=True)
