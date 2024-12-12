@@ -81,13 +81,9 @@ data = [
 # Convert data to DataFrame for better display
 df = pd.DataFrame(data)
 
-# Add "Details" column with HTML button links
+# Add "Details" column with HTML button links without newline characters
 df['Details'] = df['Link'].apply(
-    lambda x: f'''
-        <a href="{x}" target="_blank">
-            <button class="details-button">Details</button>
-        </a>
-    '''
+    lambda x: f'<a href="{x}" target="_blank"><button class="details-button">Details</button></a>'
 )
 
 # Select columns to display, excluding 'Link'
