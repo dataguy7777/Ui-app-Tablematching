@@ -79,28 +79,39 @@ data = [
 # Convert data to DataFrame for better display
 df = pd.DataFrame(data)
 
-# Display data as a table
-st.markdown("### 📋 Financial Instrument Overview")
-
-# Style the table for compact view
-st.dataframe(
-    df.drop(columns=["Link"]),  # Exclude the link column for clarity in the table
-    use_container_width=True,
-    height=400
+# Add "Details" column with HTML button links
+df['Details'] = df['Link'].apply(
+    lambda x: f'<a href="{x}" target="_blank"><button style="background-color:#4CAF50; color:white; border:none; padding:5px 10px; text-align:center; text-decoration:none; display:inline-block; font-size:14px; margin:2px; cursor:pointer; border-radius:4px;">Details</button></a>'
 )
 
-# Add detailed links in a single horizontal line for better visual appeal
-st.markdown("### 🔗 Explore Details")
+# Select columns to display, excluding 'Link'
+display_df = df.drop(columns=["Link"])
 
-# Create a horizontal layout for links using columns
-num_links = len(df)
-# Limit the number of columns to prevent layout issues on smaller screens
-max_cols = 6
-cols = st.columns(min(num_links, max_cols))
+# Convert DataFrame to HTML
+def generate_table(dataframe):
+    # Define CSS styles
+    styles = """
+    <style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        text-align: left;
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    </style>
+    """
+    # Generate HTML table
+    return styles + dataframe.to_html(escape=False, index=False)
 
-for col, row in zip(cols, df.itertuples()):
-    # Use HTML to open links in a new tab
-    col.markdown(f'<a href="{row.Link}" target="_blank">{row.Name}</a>', unsafe_allow_html=True)
+# Display data as a styled HTML table
+st.markdown("### 📋 Financial Instrument Overview", unsafe_allow_html=True)
+st.markdown(generate_table(display_df), unsafe_allow_html=True)
 
 # Add a sample graph visualization
 st.markdown("### 📊 Data Trends")
