@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 # Set page configuration
 st.set_page_config(
@@ -104,6 +103,9 @@ def generate_table(dataframe):
     th {
         background-color: #f2f2f2;
     }
+    button {
+        font-size: 14px;
+    }
     </style>
     """
     # Generate HTML table
@@ -112,16 +114,3 @@ def generate_table(dataframe):
 # Display data as a styled HTML table
 st.markdown("### 📋 Financial Instrument Overview", unsafe_allow_html=True)
 st.markdown(generate_table(display_df), unsafe_allow_html=True)
-
-# Add a sample graph visualization
-st.markdown("### 📊 Data Trends")
-st.write("Visualize trends with sample data below:")
-
-# Sample data for graph
-graph_data = pd.DataFrame({
-    "Time": range(1, 11),
-    "Value": np.random.rand(10)
-})
-
-# Display line chart
-st.line_chart(graph_data.set_index("Time"))
