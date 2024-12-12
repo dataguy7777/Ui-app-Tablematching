@@ -88,12 +88,7 @@ df['Details'] = df['Link'].apply(
 
 # Add "Regenerate" column with button and info icon without newline characters
 df['Regenerate'] = df['Link'].apply(
-    lambda x: '''
-        <div class="regen-container">
-            <button class="regen-button">Regenerate</button>
-            <span class="info-icon" title="The LLM with updated generated match">ℹ️</span>
-        </div>
-    '''
+    lambda x: '<div class="regen-container"><button class="regen-button">Regenerate</button><span class="info-icon" title="The LLM with updated generated match">ℹ️</span></div>'
 )
 
 # Select columns to display, excluding 'Link'
@@ -268,8 +263,3 @@ components.html(
     height=700,  # Adjust height as needed
     scrolling=True
 )
-
-# Optional: Handle button clicks (Advanced)
-# Note: Implementing backend functionality for buttons within components.html requires custom JavaScript and Streamlit custom components.
-# This is beyond the scope of standard Streamlit capabilities and would require a more advanced setup.
-# For simple use-cases, consider using streamlit-aggrid or other Streamlit native components.
